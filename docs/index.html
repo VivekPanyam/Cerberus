@@ -1,0 +1,480 @@
+<title>Cerberus Docs</title>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-7627242-11', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<link href="styles.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto|Source+Code+Pro" rel="stylesheet">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<p><a id='backends/amqp.AMQPBackend'></a></p>
+<h2 id="classamqpbackend">Class: AMQPBackend</h2>
+<p><em><span class='implof'>Implementation of <a href='#backends/backend-interface.IBackend'>IBackend</a></span></em></p>
+<p>The AMQP Backend is used to communicate with your other backend services
+using RPC over a message queue</p>
+<p><a id='AMQPBackend.new AMQPBackend(amqpURI, replyExchange, rpcQueue)'></a></p>
+<h3 id="newamqpbackendamqpurireplyexchangerpcqueue"><code>new AMQPBackend(amqpURI, replyExchange, rpcQueue)</code></h3>
+<h4 id="arguments">Arguments</h4>
+<ol>
+<li><code>amqpURI</code> <em>(string)</em>: URI used to connect to the message queue</li>
+<li><code>replyExchange</code> <em>(string)</em>: Name of the exchange to listen for replies on</li>
+<li><code>rpcQueue</code> <em>(string)</em>: Queue to send requests on</li>
+</ol>
+<h4 id="example">Example</h4>
+<pre><code class="js language-js">var b = new AMQPBackend("amqp://SOME_IP:2345", "cerberusResponse", "rpcQueue")
+</code></pre>
+<hr />
+<p><a id='backends/backend-interface.IBackend'></a></p>
+<h2 id="interfaceibackend">Interface: IBackend</h2>
+<p>Backend Interface</p>
+<p><a id='IBackend.enable(sendResponse)'></a></p>
+<h3 id="enablesendresponse"><code>enable(sendResponse)</code></h3>
+<p>Called by <code>Cerberus.addFrontend</code> when this backend is enabled</p>
+<h4 id="arguments-1">Arguments</h4>
+<ol>
+<li><code>sendResponse</code> <em>(<a href='#cerberus.SendResponse'>SendResponse</a>)</em></li>
+</ol>
+<h4 id="returns">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<hr />
+<p><a id='IBackend.handleConnection(connection)'></a></p>
+<h3 id="handleconnectionconnection"><code>handleConnection(connection)</code></h3>
+<p>Optional function that is called when a frontend receives a new connection</p>
+<h4 id="arguments-2">Arguments</h4>
+<ol>
+<li><code>connection</code> <em>(<a href='#routing/connection.CerberusConnection'>CerberusConnection</a>)</em></li>
+</ol>
+<h4 id="returns-1">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<hr />
+<p><a id='IBackend.handleRequest(request)'></a></p>
+<h3 id="handlerequestrequest"><code>handleRequest(request)</code></h3>
+<p>Handle a request and send a response using <code>sendResponse</code></p>
+<h4 id="arguments-3">Arguments</h4>
+<ol>
+<li><code>request</code> <em>(<a href='#routing/request.CerberusRequest'>CerberusRequest</a>)</em></li>
+</ol>
+<h4 id="returns-2">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<hr />
+<p><a id='backends/http.HTTPBackend'></a></p>
+<h2 id="classhttpbackend">Class: HTTPBackend</h2>
+<p><em><span class='implof'>Implementation of <a href='#backends/backend-interface.IBackend'>IBackend</a></span></em></p>
+<p>The HTTP Backend is used to communicate with your other backend services
+via HTTP requests</p>
+<p><a id='HTTPBackend.new HTTPBackend(generateRequestOptions)'></a></p>
+<h3 id="newhttpbackendgeneraterequestoptions"><code>new HTTPBackend(generateRequestOptions)</code></h3>
+<h4 id="arguments-4">Arguments</h4>
+<ol>
+<li><code>generateRequestOptions</code>: generate options for the <code>request</code> node library given a <code>CerberusRequest</code></li>
+</ol>
+<h4 id="example-1">Example</h4>
+<pre><code class="js language-js">new HTTPBackend((req) =&gt; ({
+  url: "https://some-internal-host:4032",
+  method: "POST",
+  json: {
+      user: req.connection.userID,
+      data: req.data.color,
+  },
+}))
+</code></pre>
+<hr />
+<p><a id='backends/zmq.ZMQBackend'></a></p>
+<h2 id="classzmqbackend">Class: ZMQBackend</h2>
+<p><em><span class='implof'>Implementation of <a href='#backends/backend-interface.IBackend'>IBackend</a></span></em></p>
+<p>The ZMQ Backend is used to communicate with your other backend services
+using ZeroMQ</p>
+<p><a id='ZMQBackend.new ZMQBackend(zmqPushURI, zmqSubURI)'></a></p>
+<h3 id="newzmqbackendzmqpushurizmqsuburi"><code>new ZMQBackend(zmqPushURI, zmqSubURI)</code></h3>
+<h4 id="arguments-5">Arguments</h4>
+<ol>
+<li><code>zmqPushURI</code> <em>(string)</em>: URI to connect to a ZMQ push socket</li>
+<li><code>zmqSubURI</code> <em>(string)</em>: URI to connect to a ZMQ sub socket</li>
+</ol>
+<h4 id="example-2">Example</h4>
+<pre><code class="js language-js">new ZMQBackend("tcp://SOME_IP:2345", "tcp://SOME_IP:2346")
+</code></pre>
+<hr />
+<h3 id="enumeventtype"><code>Enum: EventType</code></h3>
+<ul>
+<li><p><code>CONNECTION</code></p></li>
+<li><p><code>REQUEST</code></p></li>
+<li><p><code>RESPONSE</code></p></li>
+</ul>
+<p><a id='cerberus.Cerberus'></a></p>
+<h2 id="classcerberus">Class: Cerberus</h2>
+<p>The main Cerberus class</p>
+<p><a id='Cerberus.new Cerberus()'></a></p>
+<h3 id="newcerberus"><code>new Cerberus()</code></h3>
+<h4 id="arguments-6">Arguments</h4>
+<h4 id="example-3">Example</h4>
+<pre><code class="js language-js">var c = new Cerberus()
+</code></pre>
+<hr />
+<p><a id='Cerberus.addFrontend(frontend)'></a></p>
+<h3 id="addfrontendfrontend"><code>addFrontend(frontend)</code></h3>
+<p>Adds a frontend</p>
+<h4 id="arguments-7">Arguments</h4>
+<ol>
+<li><code>frontend</code> <em>(<a href='#frontends/frontend-interface.IFrontend'>IFrontend</a>)</em></li>
+</ol>
+<h4 id="returns-3">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<h4 id="example-4">Example</h4>
+<pre><code class="js language-js">var c = new Cerberus()
+
+// Add a Websocket frontend
+c.addFrontend(new WSFrontend(8080))
+
+// Add a HTTP frontend
+// `location.query` is what we want to store
+c.addFrontend(new HTTPFrontend(8081, false, (httpReq, location) =&gt; location.query))
+</code></pre>
+<hr />
+<p><a id='Cerberus.addPlugin(plugin, eventType)'></a></p>
+<h3 id="addpluginplugineventtype"><code>addPlugin(plugin, eventType)</code></h3>
+<p>Adds a plugin.
+If a plugin contains multiple handlers, you will need to add the plugin once for every handler.
+For example, if a plugin needs to run during both requests and responses, you will need to add
+it once to the request chain and once to the response chain.
+<strong>Note:</strong> The order in which plugins are added is the order in which they are executed.</p>
+<h4 id="arguments-8">Arguments</h4>
+<ol>
+<li><code>plugin</code> <em>(<a href='#plugins/plugin-interface.IPlugin'>IPlugin</a>)</em></li>
+<li><code>eventType</code> <em>("connection" | "request" | "response")</em></li>
+</ol>
+<h4 id="returns-4">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<h4 id="example-5">Example</h4>
+<pre><code class="js language-js">var latencyMeasurement = ... // Some plugin
+c.addPlugin(latencyMeasurement, "request")
+
+// Add other plugins
+
+c.addPlugin(latencyMeasurement, "response")
+</code></pre>
+<hr />
+<p><a id='Cerberus.on(type, middleware)'></a></p>
+<h3 id="ontypemiddleware"><code>on(type, middleware)</code></h3>
+<p>Run an <code>EventHandler</code> when an event fires</p>
+<h4 id="arguments-9">Arguments</h4>
+<ol>
+<li><code>type</code> <em>("connection" | "request" | "response")</em></li>
+<li><code>middleware</code> <em>(<a href='#cerberus.EventHandler'>EventHandler</a>)</em></li>
+</ol>
+<h4 id="returns-5">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<h4 id="example-6">Example</h4>
+<pre><code class="js language-js">var c = new Cerberus();
+c.on('request', function(request) {
+    // Do something
+})
+
+c.on('response', function(response) {
+    // Do something
+})
+
+c.on('connection', function(connection) {
+    // Do something
+})
+</code></pre>
+<hr />
+<p><a id='Cerberus.setBackend(backend)'></a></p>
+<h3 id="setbackendbackend"><code>setBackend(backend)</code></h3>
+<p>Sets the backend</p>
+<h4 id="arguments-10">Arguments</h4>
+<ol>
+<li><code>backend</code> <em>(<a href='#backends/backend-interface.IBackend'>IBackend</a>)</em></li>
+</ol>
+<h4 id="returns-6">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<hr />
+<p><a id='frontends/frontend-interface.IFrontend'></a></p>
+<h2 id="interfaceifrontend">Interface: IFrontend</h2>
+<p>Frontend Interface</p>
+<p><a id='IFrontend.enable(createConnection, sendRequest)'></a></p>
+<h3 id="enablecreateconnectionsendrequest"><code>enable(createConnection, sendRequest)</code></h3>
+<p>Called by <code>Cerberus.addFrontend</code> when this frontend is enabled</p>
+<h4 id="arguments-11">Arguments</h4>
+<ol>
+<li><code>createConnection</code> <em>(<a href='#cerberus.CreateConnection'>CreateConnection</a>)</em></li>
+<li><code>sendRequest</code> <em>(<a href='#cerberus.SendRequest'>SendRequest</a>)</em></li>
+</ol>
+<h4 id="returns-7">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<hr />
+<p><a id='frontends/http.HTTPFrontend'></a></p>
+<h2 id="classhttpfrontend">Class: HTTPFrontend</h2>
+<p><em><span class='implof'>Implementation of <a href='#frontends/frontend-interface.IFrontend'>IFrontend</a></span></em></p>
+<p>HTTPFrontend starts a HTTP server on a specified port</p>
+<p><a id='HTTPFrontend.new HTTPFrontend(port, allowForwadedFor, getDataFromRequest)'></a></p>
+<h3 id="newhttpfrontendportallowforwadedforgetdatafromrequest"><code>new HTTPFrontend(port, allowForwadedFor, getDataFromRequest)</code></h3>
+<h4 id="arguments-12">Arguments</h4>
+<ol>
+<li><code>port</code> <em>(number)</em>: The port to run the server on</li>
+<li><code>allowForwadedFor</code> <em>(boolean)</em>: Whether or not to look at IP addresses in the x-forwarded-for header</li>
+<li><code>getDataFromRequest</code>: A function that returns data to store in a <code>CerberusRequest</code> given a HTTP request</li>
+</ol>
+<h4 id="example-7">Example</h4>
+<pre><code class="js language-js">var c = new Cerberus()
+
+// Add a HTTP frontend
+// `location.query` is what we want to store
+c.addFrontend(new HTTPFrontend(8081, false, (httpReq, location) =&gt; location.query))
+</code></pre>
+<hr />
+<p><a id='frontends/ws.WSFrontend'></a></p>
+<h2 id="classwsfrontend">Class: WSFrontend</h2>
+<p><em><span class='implof'>Implementation of <a href='#frontends/frontend-interface.IFrontend'>IFrontend</a></span></em></p>
+<p>WSFrontend starts a Websocket server on a specified port</p>
+<p><a id='WSFrontend.new WSFrontend(port, allowForwadedFor)'></a></p>
+<h3 id="newwsfrontendportallowforwadedfor"><code>new WSFrontend(port, allowForwadedFor)</code></h3>
+<h4 id="arguments-13">Arguments</h4>
+<ol>
+<li><code>port</code> <em>(number)</em>: The port to run the server on</li>
+<li><code>allowForwadedFor</code> <em>(boolean)</em>: Whether or not to look at IP addresses in the x-forwarded-for header</li>
+</ol>
+<h4 id="example-8">Example</h4>
+<pre><code class="js language-js">var c = new Cerberus()
+
+// Add a Websocket frontend
+c.addFrontend(new WSFrontend(8080, false))
+</code></pre>
+<hr />
+<p><a id='plugins/analytics/latency.LatencyLogger'></a></p>
+<h2 id="classlatencylogger">Class: LatencyLogger</h2>
+<p><em><span class='implof'>Implementation of <a href='#plugins/plugin-interface.IPlugin'>IPlugin</a></span></em></p>
+<p>A plugin that logs the time between a request and the corresponding response.</p>
+<p><a id='LatencyLogger.new LatencyLogger(maxNumConcurrentRequestsToTrack, maxRequestAge, getRequestMethodName)'></a></p>
+<h3 id="newlatencyloggermaxnumconcurrentrequeststotrackmaxrequestagegetrequestmethodname"><code>new LatencyLogger(maxNumConcurrentRequestsToTrack, maxRequestAge, getRequestMethodName)</code></h3>
+<h4 id="arguments-14">Arguments</h4>
+<ol>
+<li><code>maxNumConcurrentRequestsToTrack</code> <em>(number)</em>: The max number of requests that can be tracked at a time</li>
+<li><code>maxRequestAge</code> <em>(number)</em>: The longest request that can be tracked (in ms)</li>
+<li><code>getRequestMethodName</code>: Function to get the name to be logged given a <code>CerberusRequest</code></li>
+</ol>
+<h4 id="example-9">Example</h4>
+<pre><code class="js language-js">new LatencyLogger(500, 1000, (req) =&gt; req.data.method)
+</code></pre>
+<hr />
+<p><a id='plugins/authentication/hmac.HMACAuthenticator'></a></p>
+<h2 id="classhmacauthenticator">Class: HMACAuthenticator</h2>
+<p><em><span class='implof'>Implementation of <a href='#plugins/plugin-interface.IPlugin'>IPlugin</a></span></em></p>
+<p>A plugin that validates a HMAC signed token when a new connection is established.
+This is compatible with signed cookies from Express (https://github.com/expressjs/cookie-parser)
+When the authenticator receives a <code>CerberusRequest</code> object, it sets the <code>userID</code>
+field in the request if the token is valid</p>
+<p><a id='HMACAuthenticator.new HMACAuthenticator(key, queryParamName, shouldErrorOnInvalidToken)'></a></p>
+<h3 id="newhmacauthenticatorkeyqueryparamnameshoulderroroninvalidtoken"><code>new HMACAuthenticator(key, queryParamName, shouldErrorOnInvalidToken)</code></h3>
+<h4 id="arguments-15">Arguments</h4>
+<ol>
+<li><code>key</code> <em>(string)</em>: The key that the token should be signed with</li>
+<li><code>queryParamName</code> <em>(string)</em>: The name of the query parameter where the token is stored</li>
+<li><code>shouldErrorOnInvalidToken</code> <em>(boolean)</em>: Whether or not connections with invalid tokens should
+throw an error be closed. If this is false, unsigned requests won't have a valid <code>userID</code></li>
+</ol>
+<h4 id="example-10">Example</h4>
+<pre><code class="js language-js">var c = new Cerberus()
+
+c.addPlugin(new HMACAuthenticator("SUPER_SECRET_HMAC_KEY", "token", false))
+</code></pre>
+<hr />
+<p><a id='plugins/cache/lru.LRUCache'></a></p>
+<h2 id="classlrucache">Class: LRUCache</h2>
+<p><em><span class='implof'>Implementation of <a href='#plugins/plugin-interface.IPlugin'>IPlugin</a></span></em></p>
+<p>A plugin to cache specific requests and responses in an in-memory LRU cache.</p>
+<p><a id='LRUCache.new LRUCache(cacheParams, getCacheKey)'></a></p>
+<h3 id="newlrucachecacheparamsgetcachekey"><code>new LRUCache(cacheParams, getCacheKey)</code></h3>
+<h4 id="arguments-16">Arguments</h4>
+<ol>
+<li><code>cacheParams</code> <em>(object)</em>: Params to pass into <code>lru-cache</code></li>
+<li><code>getCacheKey</code>: A function to get cache keys given a request. Can return null if you do
+not want to cache the response to a given request</li>
+</ol>
+<h4 id="example-11">Example</h4>
+<pre><code class="js language-js">// Use the location as the cache key
+var cachePlugin = new LRUCache({max: 5000, maxAge: 60 * 60 * 1000}, (request) =&gt; request.data.location)
+
+// Build request pipeline
+c.addPlugin(cachePlugin, "request")
+
+// Add other stuff
+
+// Build response pipeline
+c.addPlugin(cachePlugin, "response")
+</code></pre>
+<hr />
+<p><a id='plugins/cache/redis.RedisCache'></a></p>
+<h2 id="classrediscache">Class: RedisCache</h2>
+<p><em><span class='implof'>Implementation of <a href='#plugins/plugin-interface.IPlugin'>IPlugin</a></span></em></p>
+<p>A plugin to cache specific requests and responses in Redis.
+This is useful for sharing a cache between multiple Cerberus instances.</p>
+<p><a id='RedisCache.new RedisCache(hostname, port, redisCachePrefix, getCacheKey)'></a></p>
+<h3 id="newrediscachehostnameportrediscacheprefixgetcachekey"><code>new RedisCache(hostname, port, redisCachePrefix, getCacheKey)</code></h3>
+<h4 id="arguments-17">Arguments</h4>
+<ol>
+<li><code>hostname</code> <em>(string)</em>: Redis hostname or IP address</li>
+<li><code>port</code> <em>(number)</em>: Redis port</li>
+<li><code>redisCachePrefix</code> <em>(string)</em>: Prefix to add to cache keys returned by <code>getCacheKey</code></li>
+<li><code>getCacheKey</code>: A function to get cache keys given a request. Can return null if you do
+not want to cache the response to a given request</li>
+</ol>
+<h4 id="example-12">Example</h4>
+<pre><code class="js language-js">// Use the location as the cache key
+var cachePlugin = new RedisCache("127.0.0.1", 6379, "", (request) =&gt; request.data.location)
+
+// Build request pipeline
+c.addPlugin(cachePlugin, "request")
+
+// Add other stuff
+
+// Build response pipeline
+c.addPlugin(cachePlugin, "response")
+</code></pre>
+<hr />
+<p><a id='plugins/plugin-interface.IPlugin'></a></p>
+<h2 id="interfaceiplugin">Interface: IPlugin</h2>
+<p>Note: at least one of the <code>handle</code> methods in this interface must be implemented
+Each handler can return one of the following:</p>
+<ul>
+<li>null: continue processing as normal</li>
+<li>false: stop processing this (request|response|connection) WITHOUT throwing an error</li>
+<li>a new object of the same type it was given: continue processing with thet new object instead of the old one
+(e.g. handleRequest can return a new request object)</li>
+</ul>
+<p>Connection and request handlers can also return these:</p>
+<ul>
+<li>a string: This is a user visible error. The connection or request will not continue to be processed.
+If this is returned by a connection handler, the connection should be closed</li>
+</ul>
+<p><a id='IPlugin.handleConnection(connection)'></a></p>
+<h3 id="handleconnectionconnection-1"><code>handleConnection(connection)</code></h3>
+<p>Optional function that is called when Cerberus receives a new connection</p>
+<h4 id="arguments-18">Arguments</h4>
+<ol>
+<li><code>connection</code> <em>(<a href='#routing/connection.CerberusConnection'>CerberusConnection</a>)</em></li>
+</ol>
+<h4 id="returns-8">Returns</h4>
+<ol>
+<li><em>(string | true | false | void | <a href='#routing/connection.CerberusConnection'>CerberusConnection</a> | <strong>Promise&lt;string | true | false | void | <a href='#routing/connection.CerberusConnection'>CerberusConnection</a>&gt;</strong>)</em></li>
+</ol>
+<hr />
+<p><a id='IPlugin.handleRequest(request)'></a></p>
+<h3 id="handlerequestrequest-1"><code>handleRequest(request)</code></h3>
+<p>Optional function to handle requests</p>
+<h4 id="arguments-19">Arguments</h4>
+<ol>
+<li><code>request</code> <em>(<a href='#routing/request.CerberusRequest'>CerberusRequest</a>)</em></li>
+</ol>
+<h4 id="returns-9">Returns</h4>
+<ol>
+<li><em>(string | true | false | void | <a href='#routing/request.CerberusRequest'>CerberusRequest</a> | <strong>Promise&lt;string | true | false | void | <a href='#routing/request.CerberusRequest'>CerberusRequest</a>&gt;</strong>)</em></li>
+</ol>
+<hr />
+<p><a id='IPlugin.handleResponse(response)'></a></p>
+<h3 id="handleresponseresponse"><code>handleResponse(response)</code></h3>
+<p>Optional function to handle responses</p>
+<h4 id="arguments-20">Arguments</h4>
+<ol>
+<li><code>response</code> <em>(<a href='#routing/response.CerberusResponse'>CerberusResponse</a>)</em></li>
+</ol>
+<h4 id="returns-10">Returns</h4>
+<ol>
+<li><em>(true | false | void | <a href='#routing/response.CerberusResponse'>CerberusResponse</a> | <strong>Promise&lt;true | false | void | <a href='#routing/response.CerberusResponse'>CerberusResponse</a>&gt;</strong>)</em></li>
+</ol>
+<hr />
+<p><a id='IPlugin.setResponseSender(sendResponse)'></a></p>
+<h3 id="setresponsesendersendresponse"><code>setResponseSender(sendResponse)</code></h3>
+<p>If a plugin ever wants to send a response, it can get a function to do so
+by implementing this function. This is useful in caching plugins</p>
+<h4 id="arguments-21">Arguments</h4>
+<ol>
+<li><code>sendResponse</code> <em>(<a href='#cerberus.SendResponse'>SendResponse</a>)</em></li>
+</ol>
+<h4 id="returns-11">Returns</h4>
+<ol>
+<li><em>(void)</em></li>
+</ol>
+<hr />
+<p><a id='plugins/traffic/rate-limit.RateLimit'></a></p>
+<h2 id="classratelimit">Class: RateLimit</h2>
+<p><em><span class='implof'>Implementation of <a href='#plugins/plugin-interface.IPlugin'>IPlugin</a></span></em></p>
+<p>A configurable rate limiter for requests based on IP address.</p>
+<p><a id='RateLimit.new RateLimit(numRequests, timeframe, shouldRateLimit)'></a></p>
+<h3 id="newratelimitnumrequeststimeframeshouldratelimit"><code>new RateLimit(numRequests, timeframe, shouldRateLimit)</code></h3>
+<h4 id="arguments-22">Arguments</h4>
+<ol>
+<li><code>numRequests</code> <em>(any)</em>: The number of requests allowed in <code>timeframe</code></li>
+<li><code>timeframe</code> <em>(any)</em>: The timeframe in ms for the rate limit</li>
+<li><code>shouldRateLimit</code>: A function that takes a <code>CerberusRequest</code> and returns whether or
+not to count the request against the rate limit.</li>
+</ol>
+<h4 id="example-13">Example</h4>
+<pre><code class="js language-js">var c = new Cerberus()
+
+// Limit all calls to 10 requests per second per IP address
+c.addPlugin(new RateLimit(10, 1000, () =&gt; true))
+</code></pre>
+<hr />
+<p><a id='routing/connection.CerberusConnection'></a></p>
+<h2 id="classcerberusconnection">Class: CerberusConnection</h2>
+<p>CerberusConnection is a standardized representation of a connection to Cerberus</p>
+<p><a id='CerberusConnection.new CerberusConnection(sendFn, closeFn, headers, location, ipAddr)'></a></p>
+<h3 id="newcerberusconnectionsendfnclosefnheaderslocationipaddr"><code>new CerberusConnection(sendFn, closeFn, headers, location, ipAddr)</code></h3>
+<h4 id="arguments-23">Arguments</h4>
+<ol>
+<li><code>sendFn</code> <em>(<a href='#routing/connection.ConnectionSendFunction'>ConnectionSendFunction</a>)</em>: A function that sends data on the connection</li>
+<li><code>closeFn</code> <em>(<a href='#routing/connection.ConnectionCloseFunction'>ConnectionCloseFunction</a>)</em>: A function that closes the connection</li>
+<li><code>headers</code> <em>(object)</em>: Headers</li>
+<li><code>location</code> <em>(Url)</em>: Output of uri.parse</li>
+<li><code>ipAddr</code> <em>(string)</em>: Remote IP address</li>
+</ol>
+<hr />
+<p><a id='routing/request.CerberusRequest'></a></p>
+<h2 id="classcerberusrequest">Class: CerberusRequest</h2>
+<p>Request is a standardized representation of a request to Cerberus</p>
+<p><a id='CerberusRequest.new CerberusRequest(connection, data)'></a></p>
+<h3 id="newcerberusrequestconnectiondata"><code>new CerberusRequest(connection, data)</code></h3>
+<h4 id="arguments-24">Arguments</h4>
+<ol>
+<li><code>connection</code> <em>(<a href='#routing/connection.CerberusConnection'>CerberusConnection</a>)</em>: The connection that this request originated from</li>
+<li><code>data</code> <em>(object)</em>: Data for this request</li>
+</ol>
+<hr />
+<p><a id='routing/response.CerberusResponse'></a></p>
+<h2 id="classcerberusresponse">Class: CerberusResponse</h2>
+<p>Response is a standardized representation of a response in Cerberus</p>
+<p><a id='CerberusResponse.new CerberusResponse(connection, data, requestID)'></a></p>
+<h3 id="newcerberusresponseconnectiondatarequestid"><code>new CerberusResponse(connection, data, requestID)</code></h3>
+<h4 id="arguments-25">Arguments</h4>
+<ol>
+<li><code>connection</code> <em>(<a href='#routing/connection.CerberusConnection'>CerberusConnection</a>)</em>: The connection that this response should be sent on</li>
+<li><code>data</code> <em>(object)</em>: Data for this response. Should be able to stringify using JSON.stringify</li>
+<li><code>requestID</code> <em>(<a href='#routing/request.RequestID'>RequestID</a>)</em>: The RequestID for the request corresponding to this response</li>
+</ol>
+<hr />

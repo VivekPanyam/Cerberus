@@ -1,0 +1,11 @@
+{
+    "compileOnSave": true,
+    "skipLibCheck": true,
+    "compilerOptions": {
+        "outDir": "./build"
+    },
+    "exclude": [
+        "build",
+        "node_modules"
+    ]
+}

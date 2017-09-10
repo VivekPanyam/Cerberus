@@ -1,0 +1,42 @@
+{
+  "name": "cerberus-gateway",
+  "version": "0.1.1",
+  "description": "Easily create a gateway to your backend with authentication, ACL, rate limiting, analytics, logging, caching, and more",
+  "dependencies": {
+    "amqplib": "latest",
+    "limiter": "1.1.0",
+    "lru-cache": "4.0.0",
+    "node-uuid": "1.4.7",
+    "redis": "latest",
+    "request": "latest",
+    "ws": "1.0.1",
+    "zmq": "2.14.0"
+  },
+  "devDependencies": {
+    "@types/es6-promise": "latest",
+    "@types/jest": "^20.0.8",
+    "@types/nock": "^8.2.1",
+    "@types/node": "latest",
+    "jest": "^21.0.2",
+    "nock": "latest",
+    "tslint": "^5.7.0",
+    "typedoc": "^0.8.0",
+    "typedoc-clarity-theme": "^1.1.0",
+    "typescript": "^2.5.2"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest",
+    "lint": "./node_modules/.bin/tslint -c tslint.json -p tsconfig.json",
+    "build": "./node_modules/.bin/tsc -p tsconfig.json --skipLibCheck # For some reason, skipLibCheck isn't being pulled from tsconfig.json",
+    "prepublish": "npm run build && npm run test && npm run lint"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VivekPanyam/Cerberus"
+  },
+  "author": "Vivek Panyam <hello@vivekpanyam.com> (https://www.vivekpanyam.com/)"
+}
