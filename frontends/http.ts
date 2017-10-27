@@ -86,7 +86,7 @@ export class HTTPFrontend implements IFrontend {
             })
         })
 
-        server.listen(this.port, function(){
+        server.listen(this.port, function() {
             console.log("Cerberus HTTP server listening on: http://localhost:%s", self.port)
         })
     }

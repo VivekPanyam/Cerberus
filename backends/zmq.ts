@@ -1,4 +1,4 @@
-import zmq = require("zmq")
+import zmq = require("zeromq")
 
 import {SendResponse} from "../cerberus"
 import {CerberusConnection} from "../routing/connection"

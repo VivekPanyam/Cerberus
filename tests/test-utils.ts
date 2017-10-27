@@ -29,7 +29,7 @@ export function interceptCreateServer() {
 
 export function interceptWebsocketServer() {
   return new Promise(function(resolve, reject) {
-    ws.Server = function(){
+    ws.Server = function() {
       return {
         on(event, callback) {
           if (event === "connection") {

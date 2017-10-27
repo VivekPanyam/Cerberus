@@ -1,6 +1,6 @@
 {
   "name": "cerberus-gateway",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Easily create a gateway to your backend with authentication, ACL, rate limiting, analytics, logging, caching, and more",
   "dependencies": {
     "amqplib": "latest",
@@ -9,8 +9,10 @@
     "node-uuid": "1.4.7",
     "redis": "latest",
     "request": "latest",
-    "ws": "1.0.1",
-    "zmq": "2.14.0"
+    "ws": "1.0.1"
+  },
+  "optionalDependencies": {
+    "zeromq": "4.6.0"
   },
   "devDependencies": {
     "@types/es6-promise": "latest",
