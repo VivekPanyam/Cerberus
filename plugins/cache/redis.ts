@@ -77,7 +77,7 @@ export class RedisCache implements IPlugin {
 
                     // We didn't have a response cached.
                     // Cache the response when we get it.
-                    this.responsesToCache[request.requestID] = cacheKey
+                    self.responsesToCache[request.requestID] = cacheKey
 
                     return resolve()
                 })

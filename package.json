@@ -1,6 +1,6 @@
 {
   "name": "cerberus-gateway",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Easily create a gateway to your backend with authentication, ACL, rate limiting, analytics, logging, caching, and more",
   "dependencies": {
     "amqplib": "latest",
